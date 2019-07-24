@@ -1,5 +1,5 @@
 
-#### create-react-app使用
+## create-react-app使用
 
 全局安装create-react-app
 
@@ -20,7 +20,7 @@ npm run eject
 ```
 
 
-#### webpackDevServer服务器代理
+## webpackDevServer服务器代理
 老版本的create-react-app代理起来比较容易，只需要在`package.json`中增加一个代理字段即可，如下
 
 `package.json`
@@ -90,7 +90,7 @@ module.exports = function(app) {
 ```
 
 
-#### 本地数据mock
+## 本地数据mock
 
 两种方式(推荐第二种，简单)：
 
