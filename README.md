@@ -100,4 +100,37 @@ module.exports = function(app) {
 那么请求的时候直接`fetch('/mock.data.json')`即可
 
 
+##Redux
 
+![WX20190725-222401@2x.png](https://upload-images.jianshu.io/upload_images/13890429-eb937141cf2cf971.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+### 1、state
+
+redux中的state是将组件的state状态进行集中管理，复杂的组件通讯中不需要频繁的传递props，state只需要在redux中进行定义和管理即可
+
+### 2、action
+
+action用来描述如何修改状态，实际上action是一个包含`type`字段的json对象，而`type`这是action的描述，可以通过`store.dispatch`发送`action`
+
+例如下面的例子，就是一个简单的action：
+
+```js
+let todoAction = {
+    type: 'ADD_TODO',
+    id:1,
+    text:'学习react'
+}
+```
+
+但是在实际项目中，我们通常不会这样去定义，更多的情况下我们会通过action create来定义action，也就会通过定义一个函数来返回这个action的json对象:
+
+```js
+let todoAction = (data)=>{
+    return {
+        type: 'ADD_TODO',
+        id:1,
+        text:'学习react',
+        data
+    }
+}   
+```

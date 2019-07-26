@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 
 //components
-import AddTodo from './TodoList/AddTodo'
-import TodoList from './TodoList/TodoList'
-import Footer from './TodoList/Footer'
+import AddTodo from './AddTodo'
+import TodoList from './TodoList'
+import Footer from './Footer'
 
 
 
@@ -14,6 +14,7 @@ class App extends Component {
             todos:[],
             filter:'All'
         }
+        this.nextTodoId = 0
     }
     getVisibleTodos = ()=>{
         const {filter,todos} = this.state
@@ -30,7 +31,7 @@ class App extends Component {
     addTodo=(todoText)=>{
         const {todos} = this.state
         todos.push({
-            id:todos.length,
+            id:++this.nextTodoId,
             text:todoText,
             completed:false
         })
@@ -46,6 +47,10 @@ class App extends Component {
             todos
         })
     }
+
+    setViblityFilter = filter =>{
+        this.setState({filter})
+    }
     render() {
         const { filter } = this.state
         const todos = this.getVisibleTodos()
@@ -53,7 +58,7 @@ class App extends Component {
             <div>
                 <AddTodo addTodoFn={this.addTodo}/>
                 <TodoList todos={todos} toggleCompleted={this.toggleCompleted}/>
-                <Footer filter={filter} />
+                <Footer setViblityFilter={this.setViblityFilter} filter={filter} />
             </div>
         );
     }

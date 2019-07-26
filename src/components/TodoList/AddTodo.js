@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
 
 class AddTodo extends Component {
-    // constructor(props){
-    //     super(props)
-    //     this.state = 
-    // }
     addTodo = ()=>{
         const { addTodoFn } = this.props
+        if(!this.input.value) return
         addTodoFn(this.input.value)
         this.input.value = ''
     }

@@ -6,9 +6,18 @@ class Footer extends Component {
         return (
             <div>
                 <span>Show:</span>
-                <button disabled={filter==='All'}>All</button> 
-                <button disabled={filter==='Active'}>Active</button> 
-                <button disabled={filter==='Completed'}>Completed</button> 
+                <button
+                    onClick={() => { this.props.setViblityFilter('All') }}
+                    disabled={filter === 'All'}>All
+                </button>
+                <button
+                    onClick={() => { this.props.setViblityFilter('Active') }}
+                    disabled={filter === 'Active'}>Active
+                </button>
+                <button
+                    onClick={() => { this.props.setViblityFilter('Completed') }}
+                    disabled={filter === 'Completed'}>Completed
+                </button>
             </div>
         );
     }
