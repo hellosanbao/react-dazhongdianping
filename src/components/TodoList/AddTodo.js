@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux'
+import { setTodoText,addTodo } from '../../store/action/index'
 
 class AddTodo extends Component {
     addTodo = ()=>{
-        const { addTodoFn } = this.props
         if(!this.input.value) return
-        addTodoFn(this.input.value)
+        this.props.addTodo(this.input.value)
         this.input.value = ''
     }
     render() {
@@ -17,4 +18,16 @@ class AddTodo extends Component {
     }
 }
 
-export default AddTodo;
+const mapStateToProps = (state) => ({
+    text: state.text
+})
+
+const mapDispatchToProps = (dispatch) => ({
+    setTodoText: (text) => dispatch(setTodoText(text)),
+    addTodo:(text)=>dispatch(addTodo(text))
+})
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(AddTodo)

@@ -134,3 +134,273 @@ let todoAction = (data)=>{
     }
 }   
 ```
+
+#### 异步action
+
+以上的方法都只能支持同步操作，如果在action中耀实现异步操作怎么办呢？
+我们将action的返回值设定成一个函数，接受一个参数`dispatch`,然后通过dispatch去调用其他的action，如下：
+
+```js
+let todoAction = (data)=>{
+    return (dispatch)=>{
+        setTimeout(()=>{
+            dispatch(someOtherAction1)
+            dispatch(someOtherAction2)
+            //...
+        },1000)
+    }
+}   
+```
+
+redux自身是无法处理返回值是函数的action的，这里需要借助一个redux中间件`redux-thunk`来处理返回函数的action,使用`redux-thunk`的方法也比较简单，在创建store的方法中传入第二个参数applyMiddleware方法，并把redux-thunk传入到applyMiddleware即可：
+
+```js
+import { createStore,applyMiddleware } from 'redux'
+import reducers from './reducer/index'
+import reduxThunk from 'redux-thunk'
+
+//通过applyMiddleware来加载redux-thunk中间件实现异步action
+const store = createStore(reducers,applyMiddleware(reduxThunk))
+
+export default store
+```
+
+
+
+
+
+
+## Reducer
+
+![QQ20190727-110832.png](https://upload-images.jianshu.io/upload_images/13890429-a7ea785963e0a17b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+reducer是action的解析器，简单来说，action是描述干什么，而reducer则是来描述具体怎么做的
+
+
+### reducer的拆分
+
+在我们做项目的时候需要统一管理的状态实际上是非常多的，如果把这些状态统统放到一个reducer里面处理的话，会导致这个reducer异常的庞大和不好维护，所以在拆分reducer就变得很有必要
+例如：项目中有三个主要模块，home、list、detail，那么我们可以对应的吧reducer拆分成3个
+
+> #### home reducer
+
+```js
+import * as types from '../action/actionTypes'
+
+const homeInitialState ={}
+
+export default homeReducer = (state=homeInitialState,action)=>{
+    switch(action.type){
+        case types.HOME_ACTION_TEST:
+            return {
+                ...state,
+                action.data
+            }
+        default:
+            return {...state}
+    }
+}
+
+```
+
+> #### list reducer
+
+```js
+import * as types from '../action/actionTypes'
+
+const listInitialState ={}
+
+export default listReducer = (state=homeInitialState,action)=>{
+    switch(action.type){
+        case types.LIST_ACTION_TEST:
+            return {
+                ...state,
+                action.data
+            }
+        default:
+            return {...state}
+    }
+}
+
+```
+
+> #### detail reducer
+
+```js
+import * as types from '../action/actionTypes'
+
+const detailInitialState ={}
+
+export default detailReducer = (state=homeInitialState,action)=>{
+    switch(action.type){
+        case types.DETAIL_ACTION_TEST:
+            return {
+                ...state,
+                action.data
+            }
+        default:
+            return {...state}
+    }
+}
+
+```
+
+拆分完毕后，我们再在reducer的入口文件中奖这个三个reducer合并后再导出即可
+
+`/reducer/index.js`
+
+```js
+import { combineReducers } from 'redux'
+import homeReducer from './home'
+import listReducer from './list'
+import detailReducer from './detail'
+
+export default combineReducers({
+    homeReducer,
+    listReducer,
+    detailReducer
+})
+```
+
+
+## Store
+
+![QQ20190728-152511@2x.png](https://upload-images.jianshu.io/upload_images/13890429-0aceea00fcaa211b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+
+store就是将actions、state、reducer整合到一起的粘合剂
+具体如何使用呢？
+
+1、首先，我们要借助redux的createStore来将合并后的reducer集合创建成一个store对象
+
+2、然后，我们通过store.subscribe来监听state的变化，该方法返回的是一个unsubscribe的取消订阅的方法，再次调用则是取消监听
+
+3、最后通过store.dispatch来触发action从而改变state
+
+那么store的工作流主要就是这3步，下面是一个简单的示例帮助理解：
+
+```js
+import { createStore } from 'redux'
+import reducers from './reducer/index'
+import * as actions from './action/index'
+
+//创建store
+const store = createStore(reducers)
+
+//获取初始化时的state
+console.log(store.getState())
+
+//订阅state变化
+const unsubscribe = store.subscribe(()=>{
+    console.log(store.getState())
+})
+
+//发送action
+store.dispatch(actions.addTodo('hello'))
+store.dispatch(actions.toggleTodo(0))
+store.dispatch(actions.setFilter('all'))
+store.dispatch(actions.setTodoText('hello world'))
+
+//取消订阅
+unsubscribe()
+```
+
+## react-redux
+
+redux可以帮助我们对状态进行集中管理，那么我们如何将redux的store与react联系起来呢，react-redux可以很好的帮助我们做这件事
+
+#### 1、将store注入到App组件(根组件)
+
+首先我们通过react-redux提供的高阶组件`Provider`将`App`组件包裹，并将创建好的store作为props传入到Provider组件中：
+
+```jsx
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './components/TodoList/App';
+import * as serviceWorker from './serviceWorker';
+import store from './store/store'
+import { Provider } from 'react-redux'
+
+ReactDOM.render(
+    <Provider store={store}>
+        <App />
+    </Provider>
+, document.getElementById('root'));
+
+// If you want your app to work offline and load faster, you can change
+// unregister() to register() below. Note this comes with some pitfalls.
+// Learn more about service workers: https://bit.ly/CRA-PWA
+serviceWorker.unregister();
+
+```
+
+#### 2、将项目中的容器组件通过connect来进行与redux的连接
+connect方法接受两个map func作为参数，第一个是`mapStateToProps`,接受`state`参数，作用是你将redux的state绑定到组件的props上，第二个是`mapDispatchToProps`接受`dispatch`参数，作用是将action绑定到组件的props上，最后将组件作为参数传入到connect返回的方法中并导出
+
+```jsx
+import React, { Component } from 'react';
+import { connect } from 'react-redux'
+import { setFilter } from '../../store/action/index'
+
+class Footer extends Component {
+    render() {
+        const { filter } = this.props
+        return (
+            <div>
+                <span>Show:</span>
+                <button
+                    onClick={() => { this.props.setViblityFilter('All') }}
+                    disabled={filter === 'All'}>All
+                </button>
+                <button
+                    onClick={() => { this.props.setViblityFilter('Active') }}
+                    disabled={filter === 'Active'}>Active
+                </button>
+                <button
+                    onClick={() => { this.props.setViblityFilter('Completed') }}
+                    disabled={filter === 'Completed'}>Completed
+                </button>
+            </div>
+        );
+    }
+}
+
+const mapStateToProps = (state) => ({
+    filter: state.filter
+})
+
+const mapDispatchToProps = (dispatch) => ({
+    setViblityFilter:(filter)=>dispatch(setFilter(filter))
+})
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Footer)
+```
+
+### redux调试工具 redux-devTools
+
+#### 接入redux-devTools就两步
+
+1、在谷歌插件市场安装redux-devTools
+
+2、修改store的创建函数,主要用到redux提供的compose来连接
+
+```js
+import { createStore, applyMiddleware, compose } from 'redux'
+import reducers from './reducer/index'
+import reduxThunk from 'redux-thunk'
+
+//composeEnhancers用于接入谷歌差劲redux-devTools的使用
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const store = createStore(reducers, /* preloadedState, */ composeEnhancers(
+    //通过applyMiddleware来加载redux-thunk中间件实现异步action
+    applyMiddleware(reduxThunk)
+));
+
+export default store
+```
+
+
+

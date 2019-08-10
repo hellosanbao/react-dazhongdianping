@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux'
+import { setFilter } from '../../store/action/index'
 
 class Footer extends Component {
     render() {
@@ -23,4 +25,15 @@ class Footer extends Component {
     }
 }
 
-export default Footer;
+const mapStateToProps = (state) => ({
+    filter: state.filter
+})
+
+const mapDispatchToProps = (dispatch) => ({
+    setViblityFilter:(filter)=>dispatch(setFilter(filter))
+})
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Footer)
