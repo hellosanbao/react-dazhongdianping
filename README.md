@@ -403,4 +403,55 @@ export default store
 ```
 
 
+### redux中间件
+
+中间件目的就是增强store的dispatch的能力，如下图，view发出的dispatch会经过中间件的后返回一个`next`函数，接受action，如果是多个中间件，就重复这个动作，而action会依次的传给下一个中间件
+
+ ![WX20190810-202720@2x.png](https://upload-images.jianshu.io/upload_images/13890429-0d33ec2d070f0715.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+我们可以简单的写一个redux的中间件`logger`来测试一下
+
+```js
+const logger = ({getState,dispatch})=>(next)=>{
+    return (action)=>{
+        console.group(action.type);
+        console.log('dispatch:',action);
+        const result = next(action);
+        console.log('next state:',getState());
+        console.groupEnd();
+        return result;
+    }
+}
+export default logger;
+```
+
+如上面代码所示，logger中间件实际上就是一个函数，接受`getState`,`dispatch`参数，该函数会返回一个函数，接受`action`作为参数，打印出type和action之后，再执行下一个中间件，执行完后再打印新的state，注意next方法是执行下一个中间件的意思
+
+### storeEnhancer
+
+storeEnhancer是redux中间件更底层的一个封装，redux提供的applyMiddleware就是将
+storeEnhancer进行了进一步的封装，同样我们写一个简单的enhancer来实现logger功能：
+
+```js
+const logger = (createStore) => {
+    return (...args) => {
+        const store = createStore(...args);
+        const dispatch = (action) => {
+            console.group(action.type);
+            console.log('dispatch:', action);
+            const result = store.dispatch(action);
+            console.log('next state:', store.getState());
+            console.groupEnd();
+            return result;
+        }
+        return { ...store, dispatch }
+    }
+}
+export default logger;
+```
+
+可以看出，enhancer也是一个函数，接受createStore，返回一个函数，
+在返回的函数中创建store，然后合一给store上的一系列api进行修改甚至重写，最后再讲store返回。用起来middleware更加灵活，因为它更底层，那么实际项目中我们如何选择呢？
+
+实际项目中我们尽量使用middleware，因为enhancer使我们能随意修改store上的api，这样在开发时尤其是多人协作的时候回遇到意想不到的错误，middleware可以说是给我们一个规范，不能随意的修改store，更加安全
 
