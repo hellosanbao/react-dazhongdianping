@@ -1,0 +1,23 @@
+
+.Home{
+    .bg{
+        background-image: linear-gradient(180deg , #7A88FF, #7AFFAF);
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+        z-index: -1
+    }
+    .title{
+        font-size: 80px;
+        text-align: center;
+        background: url(../../static/img/giphy.gif);
+        background-size: contain;
+        background-position: top left;
+        -webkit-background-clip: text;
+        color: transparent;
+        font-weight: bold;
+        font-family: sans-serif;
+    }
+}

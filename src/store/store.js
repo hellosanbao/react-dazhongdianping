@@ -2,7 +2,7 @@ import { createStore, applyMiddleware, compose } from 'redux'
 import reducers from './reducer/index'
 import reduxThunk from 'redux-thunk'
 import loggerMiddleware from './middleware/logger'
-import loggerEnhancer from './enHancers/logger'
+// import loggerEnhancer from './enHancers/logger'
 // import * as actions from './action/index'
 
 //不使用redux-devtools的时候
@@ -13,7 +13,7 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(reducers, /* preloadedState, */ composeEnhancers(
     //通过applyMiddleware来加载redux-thunk中间件实现异步action
     applyMiddleware(reduxThunk,loggerMiddleware),
-    loggerEnhancer
+    // loggerEnhancer
 ));
 
 export default store
