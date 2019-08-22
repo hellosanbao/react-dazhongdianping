@@ -455,3 +455,16 @@ export default logger;
 
 实际项目中我们尽量使用middleware，因为enhancer使我们能随意修改store上的api，这样在开发时尤其是多人协作的时候回遇到意想不到的错误，middleware可以说是给我们一个规范，不能随意的修改store，更加安全
 
+
+## React-router
+
+react-router是react操作路由系统的核心库，基于该库实现的web端路由库react-router-dom可以帮我们实现web单页面的路由操作（native端的路由库是react-router-native）
+
+### Router
+
+react-router 使用方式就是在跟组件外包一层Router组件，react-router4的Router组件有两种，`HashRouter`和`BrowserRouter`,
+
+- HashRouter不会改变路由的path而是通过改变路由中的hash串来识别当前路由，主要是为了老版本的浏览器不支持新的h5路由api而存在
+- BrowserRouter则是利用h5的路由api来进行路由拦截，从而实现路由的控制，之中方式的路由更直观，性能更好，推荐使用（使用该路由方式需要在服务器端做配置，任何路由都返回首页的路由，防止手动输入非首页路由404）
+
+
