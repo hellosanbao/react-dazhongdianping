@@ -1,14 +1,14 @@
 import request from '../../utils/request'
-export const requestMh = (data)=>{
+const requestMh = (list)=>{
     return {
         type:'HOME',
-        data
+        mhList:list
     }
 }
 
 export const fetchMhData = (query) =>{
     return async (dispatch) =>{
-        let data = await request({mhname:query})
-        return dispatch(requestMh(data))
+        let res = await request({mhname:query})
+        dispatch(requestMh(res.data.list))
     }
 }

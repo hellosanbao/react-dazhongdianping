@@ -6,13 +6,19 @@ import './index.scss'
 
 class Home extends Component {
     render() {
-        const { fetchMhData } = this.props
+        const { fetchMhData,home } = this.props
         return (
             <div className="Home">
                 <div className="bg"></div>
                 <div className="title">超牛逼的网站</div>
-                <p onClick={()=>{fetchMhData('海贼王')}}>add test</p>
-                <p>{this.props.home}</p>
+                <p onClick={()=>{fetchMhData('海贼王')}}>海贼王</p>
+                {
+                    home.mhList && (
+                        home.mhList.map((data,index)=>{
+                            return <p key={`${index}-${data.url}`}>{data.name}</p>
+                        })
+                    )
+                }
             </div>
         );
     }

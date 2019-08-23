@@ -1,7 +1,7 @@
 
 .Home{
     .bg{
-        background-image: linear-gradient(180deg , #7A88FF, #7AFFAF);
+        background-image: linear-gradient(180deg , rgba(233, 248, 156, 0.178), rgba(122,255,175,.5));
         position: fixed;
         left: 0;
         right: 0;
@@ -10,7 +10,7 @@
         z-index: -1
     }
     .title{
-        font-size: 80px;
+        font-size: 50px;
         text-align: center;
         background: url(../../static/img/giphy.gif);
         background-size: contain;

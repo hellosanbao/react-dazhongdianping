@@ -1,9 +1,10 @@
 
-export default (state='',action)=>{
+export default (state={},action)=>{
     switch(action.type){
         case 'HOME':
-            return action.text
+            const newState = {mhList:action.mhList}
+            return {...state,...newState}
         default:
-            return ''
+            return {...state}
     }
 }
